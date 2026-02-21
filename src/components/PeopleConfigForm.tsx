@@ -1,20 +1,3 @@
-/**
- * =============================================
- *  YOUR WORK GOES HERE
- * =============================================
- *
- * Build the "People Configuration" form as described in the README.
- *
- * Hooks you must use (imported from src/hooks/):
- *   - useMockPeople()    → loads people list via useQuery
- *   - useMockSubmit()    → submits the payload via useMutation
- *
- * Ant Design components you'll need:
- *   Form, Select, Input, Button, Spin, message
- *
- * Good luck!
- */
-
 import { Button, Form, Input, Select, Spin, message } from "antd";
 import { useMockPeople } from "../hooks/useMockPeople";
 import { useMockSubmit } from "../hooks/useMockSubmit";
@@ -43,8 +26,24 @@ const PeopleConfigForm = () => {
   const onFinish = () => {
     const fields = form.getFieldValue("formFields") || {};
 
-    // TODO: Build the payload based on selectedPeople and formFields values.
-    const payload: SubmitItem[] = [];
+    // Build the payload based on selectedPeople and formFields values.
+    const payload: SubmitItem[] = selectedPeople.map((personKey) => {
+      const [id] = personKey.split("~");
+      const personData = fields[personKey] || {};
+
+      /**
+       * Note: The 'SubmitItem' type requires a 'gender' field, but the 
+       * 'Person' type does not provide it and the UI has no gender selection.
+       * We default to "other" to ensure type-safety for the submission.
+       */
+      return {
+        person_id: Number(id),
+        name: personData.name,
+        age: Number(personData.age),
+        email: personData.email,
+        gender: "other", 
+      };
+    });
 
     submit(payload, {
       onSuccess: (res) => {
