@@ -110,12 +110,7 @@ const PeopleConfigForm = () => {
                 name={["formFields", personKey, "name"]}
                 label="Name"
                 initialValue={personName}
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter a name",
-                  },
-                ]}
+                rules={[{ required: true, message: "Please enter a name" }]}
               >
                 <Input placeholder="Full name" />
               </Form.Item>
@@ -124,7 +119,18 @@ const PeopleConfigForm = () => {
               <Form.Item
                 name={["formFields", personKey, "age"]}
                 label="Age"
-                // TODO: Add required + 1-120 validation for age.
+                rules={[
+                  { required: true, message: "Age is required" },
+                  {
+                    validator: (_, value) => {
+                      const age = Number(value);
+                      if (!value || (age >= 1 && age <= 120)) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(new Error("Age must be between 1 and 120"));
+                    },
+                  },
+                ]}
               >
                 <Input type="number" placeholder="e.g. 30" />
               </Form.Item>
@@ -133,7 +139,10 @@ const PeopleConfigForm = () => {
               <Form.Item
                 name={["formFields", personKey, "email"]}
                 label="Email"
-                // TODO: Add required + email validation.
+                rules={[
+                  { required: true, message: "Email is required" },
+                  { type: "email", message: "Please enter a valid email" },
+                ]}
               >
                 <Input placeholder="e.g. john@example.com" />
               </Form.Item>
@@ -148,7 +157,7 @@ const PeopleConfigForm = () => {
             type="primary"
             htmlType="submit"
             loading={isSubmitting}
-            // TODO: Disable when no people are selected.
+            disabled={selectedPeople.length === 0}
             size="large"
           >
             Submit
